@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <br>
+    <main role="main" class="container" style="background: gray;">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <br>
+    <h1>Имя</h1>
+    <h1 class="display-6" style="color: white">{{ name }}</h1>
+    <br>
+    <h1>Фамилия</h1>
+    <h1 class="display-6" style="color: white">{{ surname }}</h1>
+    <br>
+    <h1>Возвраст</h1>
+    <h1 class="display-6" style="color: white">{{ age }}</h1>
+    <br>
+    <h1>Логин</h1>
+    <h1 class="display-6" style="color: white">{{ email }}</h1>
+    <br>
+    <h1>Cостав</h1>
+    {% if sostav == "N" %}
+       <h1 class="display-6" style="color: white">вы еще не состоите в составе</h1>
+        <a href="/add_zayavka" class="btn btn-light">отправить заявку</a>
+    {% elif sostav == "Y" %}
+       <h1 class="display-6" style="color: white">Младший</h1>
+        <br>
+            <h1>тренировки</h1>
+            <div style="background: white;">
+            <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">дата</th>
+          <th scope="col">состав</th>
+          <th scope="col">длительность</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for item in train %}
+        <tr>
+          <th scope="row">{{ loop.index }}</th>
+            {% for el in item %}
+          <td>{{ el }}</td>
+            {% endfor %}
+        {% endfor %}
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    {% elif sostav == "O" %}
+        <h1 class="display-6" style="color: white">Старший</h1>
+        <br>
+            <h1>тренировки</h1>
+            <div style="background: white;">
+            <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">дата</th>
+          <th scope="col">состав</th>
+          <th scope="col">длительность</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for item in train %}
+        <tr>
+          <th scope="row">{{ loop.index }}</th>
+            {% for el in item %}
+          <td>{{ el }}</td>
+            {% endfor %}
+        {% endfor %}
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    {% elif sostav == "P" %}
+       <h1 class="display-6" style="color: white">Преподаватели</h1>
+        <br>
+            <h1>тренировки</h1>
+            <div style="background: white;">
+            <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">дата</th>
+          <th scope="col">состав</th>
+          <th scope="col">длительность</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for item in train %}
+        <tr>
+          <th scope="row">{{ loop.index }}</th>
+            {% for el in item %}
+          <td>{{ el }}</td>
+            {% endfor %}
+        {% endfor %}
+        </tr>
+      </tbody>
+    </table>
+    </div>
+       <h1>Инструменты преподавателя</h1>
+       <a href="/prosmotr_zayavok" class="btn btn-warning">просмотр заявок</a>
+       <a href="/add_train" class="btn btn-primary">добавление тренировок</a>
+       <a href="/delete_train" class="btn btn-warning">удаление тренировок</a>
+       <a href="/newsadd" class="btn btn-primary">добавление новости</a>
+
+    {% endif %}
+    <a href="/logout" class="btn btn-danger">выйти с аккаунта</a>
+    </main>
+{% endblock %}

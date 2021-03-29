@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+<h1>просмотр заявок</h1>
+<p>
+   <h2>планируемый состав: </h2>
+    {% if zayavka.sostav == "Y" %}
+        младший
+    {% elif zayavka.sostav == "O" %}
+        старший
+    {% elif zayavka.sostav == "P" %}
+        преподователи
+    {% endif %}
+</p>
+<p>
+    <h2>подготовка: </h2>
+    {{ zayavka.podgotovka }}
+</p>
+{% if zayavka.about %}
+<p>
+    <h2>о себе :</h2>
+    {{ zayavka.about }}
+</p>
+{% endif %}
+<form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.opin.label }}<br>
+            <div class="control-group">
+            {% for subfield in form.opin %}
+            <label class="radio">
+                {{ subfield }}
+                {{ subfield.label }}
+            </label>
+            {% endfor %}
+            </div><br>
+            {% for error in form.opin.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit(type="submit", class="btn btn-dark") }}</p>
+    </form>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <h1>удаление тренировки</h1>
+            <div style="background: white;">
+            <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">дата</th>
+          <th scope="col">состав</th>
+          <th scope="col">длительность</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for item in train %}
+        <tr>
+          <th scope="row">{{ loop.index }}</th>
+            {% for el in item %}
+          <td>{{ el }}</td>
+            {% endfor %}
+        {% endfor %}
+        </tr>
+      </tbody>
+    </table>
+    </div>
+<br>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.train_id.label }}<br>
+            {{ form.train_id(class="form-control") }}<br>
+            {% for error in form.train_id.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit(type="submit", class="btn btn-dark") }}</p>
+    </form>
+    <div>{{ message }}</div>
+{% endblock %}

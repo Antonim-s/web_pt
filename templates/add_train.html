@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <h1>Добавление тренировки</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.dur.label }}<br>
+            {{ form.dur(class="form-control") }}<br>
+            {% for error in form.dur.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.date.label }}<br>
+            {{ form.date(class="form-control", type="date") }}<br>
+            {% for error in form.date.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.time.label }}<br>
+            {{ form.time(class="form-control", type="time") }}<br>
+            {% for error in form.time.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.sostav.label }}<br>
+            <div class="control-group">
+            {% for subfield in form.sostav %}
+            <label class="radio">
+                {{ subfield }}
+                {{ subfield.label }}
+            </label>
+            {% endfor %}
+            </div><br>
+            {% for error in form.sostav.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit(type="submit", class="btn btn-dark") }}</p>
+
+    </form>
+{% endblock %}

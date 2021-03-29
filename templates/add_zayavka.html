@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <h1>заявка</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.about.label }}<br>
+            {{ form.about(class="form-control") }}<br>
+            {% for error in form.about.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.sostav.label }}<br>
+            <div class="control-group">
+            {% for subfield in form.sostav %}
+            <label class="radio">
+                {{ subfield }}
+                {{ subfield.label }}
+            </label>
+            {% endfor %}
+            </div><br>
+            {% for error in form.sostav.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.podgotovka.label }}<br>
+            <div class="control-group">
+            {% for subfield in form.podgotovka %}
+            <label class="radio">
+                {{ subfield }}
+                {{ subfield.label }}
+            </label>
+            {% endfor %}
+            </div><br>
+            {% for error in form.podgotovka.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit(type="submit", class="btn btn-dark") }}</p>
+    </form>
+{% endblock %}

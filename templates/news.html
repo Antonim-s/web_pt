@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+<!--{% if news %}-->
+{% for n in news %}
+<div class="card mb-3">
+    {% if n.img %}
+    <img src="{{ n.img }}" class="card-img-top">
+    {% endif %}
+    <div class="card-body">
+        <h5 class="card-title">{{ n.title }}</h5>
+        <p class="card-text">{{ n.content }}</p>
+        <p class="card-text"><small class="text-muted">Last updated {{ n.upd_date }}</small>
+        {% if current_user.id == n.user_id or current_user.id == 1 %}
+        <a href="/newsdel/{{ n.id }}" class="btn btn-danger">удалить</a>
+        <a href="/newsput/{{ n.id }}" class="btn btn-info">редактировать</a>
+        {% endif %}
+        </p>
+    </div>
+</div>
+{% endfor %}
+<!--{% else %}-->
+<!--<h1>Пока новостей нет(</h1>-->
+<!--{% endif %}-->
+{% endblock %}
