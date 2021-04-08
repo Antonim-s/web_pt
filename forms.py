@@ -6,6 +6,7 @@ from flask_wtf.file import FileField, FileRequired
 from wtforms.fields.html5 import EmailField, DateTimeField
 from wtforms.validators import DataRequired
 
+
 class LoginForm(FlaskForm):
     email = EmailField('Почта', validators=[DataRequired()])
     password = PasswordField('Пароль', validators=[DataRequired()])
@@ -57,4 +58,16 @@ class AddNewsForm(FlaskForm):
     title = StringField('title', validators=[DataRequired()])
     content = StringField('content', validators=[DataRequired()])
     img = FileField('image')
+    submit = SubmitField('Submit')
+
+
+class AddTovarForm(FlaskForm):
+    content = StringField('описание', validators=[DataRequired()])
+    price = IntegerField('цена', validators=[DataRequired()])
+    img = FileField('image')
+    category = RadioField('категория',
+                          choices=[('up', 'головные уборы'), ('mid', 'толстовки, футболки'), ('midd', 'штаны'),
+                                   ('down', 'обувь, носки')],
+                          validators=[DataRequired()])
+
     submit = SubmitField('Submit')

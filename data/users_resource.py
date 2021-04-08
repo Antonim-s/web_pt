@@ -21,9 +21,9 @@ class UsersResource(Resource):
         abort_if_user_not_found(user_id)
         session = db_session.create_session()
         users = session.query(User).get(user_id)
-        return jsonify({'user': users.to_dict(only=('name', 'surname', 'age', 'address',
-                                                    'email', 'position', 'speciality',
-                                                    'hashed_password'))})
+        return jsonify({'user': users.to_dict(only=('name', 'surname', 'age',
+                                                    'email', 'sostav',
+                                                             'hashed_password'))})
 
     def delete(self, user_id):
         abort_if_user_not_found(user_id)
@@ -38,22 +38,19 @@ class UsersListResource(Resource):
     def get(self):
         session = db_session.create_session()
         users = session.query(User).all()
-        return jsonify({'users': [item.to_dict(only=('name', 'surname', 'age', 'address',
-                                                     'email', 'position', 'speciality',
-                                                     'hashed_password')) for item in users]})
+        return jsonify({'users': [item.to_dict(only=('name', 'surname', 'age',
+                                                    'email', 'sostav',
+                                                             'hashed_password')) for item in users]})
 
     def post(self):
         args = parser.parse_args()
         session = db_session.create_session()
         user = User(
-            id=args['user_id'],
             name=args['name'],
             surname=args['surname'],
             age=args['age'],
-            address=args['address'],
             email=args['email'],
-            position=args['position'],
-            speciality=args['speciality'],
+            sostav = args['sostav'],
             hashed_password=generate_password_hash(args['hashed_password'])
         )
         session.add(user)

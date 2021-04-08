@@ -21,6 +21,7 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     sostav = sqlalchemy.Column(sqlalchemy.String, default='N')
     news = orm.relation("News", back_populates='user')
     application = orm.relation("Application", back_populates='user')
+    tovar = orm.relation("Tovar", back_populates='user')
 
     def __repr__(self):
         return f'<User> {self.id} {self.surname} {self.name} {self.email}'

@@ -2,21 +2,24 @@ import datetime
 
 from flask import Flask, render_template, request, url_for
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask_restful import Api
 from flask_wtf.file import FileStorage
 from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 from data.applications import Application
 import os
-from data import db_session
+from data import db_session, users_resource, train_resource, aplic_resource, tovar_resource, news_resources
 from data.news import News
+from data.tovari import Tovar
 from data.users import User
 from data.train import Train
-from forms import LoginForm, RegisterForm, TrainForm, DelTrain, ZayavkaForm, ProsmotrForm, AddNewsForm
+from forms import LoginForm, RegisterForm, TrainForm, DelTrain, ZayavkaForm, ProsmotrForm, AddNewsForm, AddTovarForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
+api = Api(app)
 
 
 @login_manager.user_loader
@@ -256,15 +259,15 @@ def delnews(news_id):
 @login_required
 def putnews(news_id):
     form = AddNewsForm()
-    session = db_session.create_session()
-    new = session.query(News).get(news_id)
-    if new:
-        form.title.data = new.title
-        form.content.data = new.content
-        if new.img:
-            form.img.data = FileStorage(stream=open(new.img), filename=new.img)
-    else:
-        abort(404)
+    if request.method == 'GET':
+        session = db_session.create_session()
+        new = session.query(News).get(news_id)
+        if new:
+            form.title.data = new.title
+            form.content.data = new.content
+            os.remove(new.img)
+        else:
+            abort(404)
     if form.validate_on_submit():
         session = db_session.create_session()
         new = session.query(News).get(news_id)
@@ -272,10 +275,9 @@ def putnews(news_id):
             new.title = form.title.data
             new.content = form.content.data
             if form.img.data:
-                if form.img.data.filename != new.img:
-                    os.remove(new.img)
-                    form.img.data.save('static/img/news/' + form.img.data.filename)
-                    new.img = 'static/img/news/' + form.img.data.filename
+                form.img.data.save('static/img/news/' + form.img.data.filename)
+                new.img = 'static/img/news/' + form.img.data.filename
+            new.upd_date = datetime.datetime.now()
             session.commit()
             return redirect('/news')
         else:
@@ -283,6 +285,102 @@ def putnews(news_id):
     return render_template('addnews.html', form=form)
 
 
+@app.route('/tovari')
+def tovari():
+    session = db_session.create_session()
+    tovari = session.query(Tovar).all()
+    return render_template('tovari.html', tovari=tovari)
+
+
+@app.route('/tovaradd', methods=['GET', 'POST'])
+@login_required
+def tovaradd():
+    form = AddTovarForm()
+    if current_user.sostav != 'P':
+        return redirect('/')
+    if form.validate_on_submit():
+        tov = Tovar(
+            content=form.content.data,
+            category=form.category.data,
+            price=form.price.data,
+            upd_date=datetime.datetime.now()
+        )
+        if form.img.data:
+            form.img.data.save('static/img/tovar/' + form.img.data.filename)
+            tov.img = 'static/img/tovar/' + form.img.data.filename
+        session = db_session.create_session()
+        session.add(tov)
+        session.commit()
+        return redirect('/tovari')
+    return render_template('addtovar.html', form=form)
+
+
+@app.route('/tovardel/<int:tov_id>', methods=['GET', 'POST'])
+@login_required
+def tovardel(tov_id):
+    session = db_session.create_session()
+    tov = session.query(Tovar).get(tov_id)
+    if tov:
+        if tov.img:
+            os.remove(tov.img)
+        session.delete(tov)
+        session.commit()
+        return redirect('/tovari')
+    else:
+        abort(404)
+
+
+@app.route('/tovarput/<int:tov_id>', methods=['GET', 'POST'])
+@login_required
+def puttovar(tov_id):
+    form = AddTovarForm()
+    if request.method == 'GET':
+        session = db_session.create_session()
+        tov = session.query(Tovar).get(tov_id)
+        if tov:
+            form.price.data = tov.price
+            form.content.data = tov.content
+            form.category.data = tov.category
+            os.remove(tov.img)
+        else:
+            abort(404)
+    if form.validate_on_submit():
+        session = db_session.create_session()
+        tov = session.query(Tovar).get(tov_id)
+        if tov:
+            tov.content = form.content.data
+            tov.price = form.price.data
+            tov.category = form.category.data
+            if form.img.data:
+                form.img.data.save('static/img/tovar/' + form.img.data.filename)
+                tov.img = 'static/img/tovar/' + form.img.data.filename
+            tov.upd_date = datetime.datetime.now()
+            session.commit()
+            return redirect('/tovari')
+        else:
+            abort(404)
+    return render_template('addtovar.html', form=form)
+
+
+@app.route('/tovarsort/<prizn>')
+def tovarisort(prizn):
+    session = db_session.create_session()
+    tovari = session.query(Tovar).filter(Tovar.category == prizn).all()
+    return render_template('tovari.html', tovari=tovari)
+
+
 if __name__ == '__main__':
+    api.add_resource(users_resource.UsersListResource, '/api/users')
+    api.add_resource(users_resource.UsersResource,
+                     '/api/users/<int:user_id>')
+    api.add_resource(train_resource.TrainListResource, '/api/trains')
+    api.add_resource(train_resource.TrainResource, '/api/trains/<int:train_id>')
+    api.add_resource(aplic_resource.AplicListResource, '/api/aplic')
+    api.add_resource(aplic_resource.AplicResource, '/api/aplic/<int:aplic_id>')
+    api.add_resource(tovar_resource.TovarListResource, '/api/tovar')
+    api.add_resource(tovar_resource.TovarResource, '/api/tovar/<int:tovar_id>')
+    api.add_resource(news_resources.NewsListResource, '/api/news')
+    api.add_resource(news_resources.NewsResource, '/api/news/<int:news_id>')
+
     db_session.global_init('db/blogs.sqlite')
     app.run(port=8080, host='127.0.0.1')
